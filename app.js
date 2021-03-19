@@ -19,8 +19,8 @@ app.use(bodyPaser.json()); // Json de entrada no body
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header(
-        'Access-Control-Allow-Origin',
-        'Origin, X-Requrested-With, Content_type, Accept, Authorization'
+        'Access-Control-Allow-Header',
+        'Origin, X-Requested-With, Content_Type, Accept, Authorization'
     );
     if (req.method === 'OPTIONS'){
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
