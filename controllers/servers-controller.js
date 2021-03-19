@@ -9,12 +9,13 @@ exports.getServers = (req, res, next) => {
             (error, result, fields) => {
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
-                    quantidade: result.length,
-                    servers: result.map(serv => {
+                    Quant: result.length,
+                    SERVIDOR: result.map(serv => {
                         return {
-                            id: serv.ID,
-                            name: serv.name,
-                            ip: serv.ip,
+                            ID: serv.ID,
+                            NAME: serv.NAME,
+                            IP: serv.IP,
+                            SNMP: serv.SNMP_COMMUNITY,
                             request: {
                                 tipo: "GET",
                                 desc: "RETORNA TODOS OS SERVIDORES",
@@ -31,26 +32,27 @@ exports.getServers = (req, res, next) => {
 
 
 //
-exports.postServers = (req, res, next) => {
+exports.putServers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            'INSERT INTO servers (name, ip) VALUES (?,?)',
-            [req.body.name, req.body.ip],
+            'INSERT INTO servers (name, ip, snmp_community) VALUES (?,?,?)',
+            [req.body.name, req.body.ip, req.body.snmp],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
                     mensagem: 'SERVIDOR CRIADO COM SUCESSO',
-                    newServe:{
-                        ID: result.ID,
-                        name: req.body.name,
-                        ip: req.body.ip,
-                        request: {
-                            tipo: "POST",
-                            desc: "INSERE NOVO SERVIDOR",
-                            url: 'http://localhost:3000/servers/'
-                        }
+                    NOVO_SERVIDOR:{
+                                ID: result.insertId,
+                                NAME: req.body.name,
+                                IP: req.body.ip,
+                                SNMP: req.body.snmp,
+                                request: {
+                                    tipo: "POST",
+                                    desc: "INSERE NOVO SERVIDOR",
+                                    url: 'http://localhost:3000/servers/'
+                                }
                     }
                 }
                 return res.status(201).send(response);
@@ -76,14 +78,15 @@ exports.getIdServer = (req, res, next) => {
                     })
                 }
                 const response = {
-                    Serve: {
+                    SERVIDOR: {
                         ID: result[0].ID,
-                        NAME: result[0].name,
-                        IP: result[0].ip,
+                        NAME: result[0].NAME,
+                        IP: result[0].IP,
+                        SNMP: result[0].SNMP_COMMUNITY,
+
                         request: {
                             tipo: "GET",
-                            desc: "RETORNA DADOS DE UM SERVIDOR",
-                            url: 'http://localhost:3000/servers'
+                            desc: "DADOS DO SERVIDOR " + result[0].NAME
                         }
                     }
                 }
@@ -100,27 +103,31 @@ exports.patchServer  = (req, res, next) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
             `UPDATE servers
-                SET name = ?, 
-                    ip   = ? 
-                WHERE id = ?`,
-            [
+                SET   NAME = ?,
+                      IP   = ?,
+            SNMP_COMMUNITY = ?
+                WHERE  id = ?`,
+            [                
                 req.body.name, 
                 req.body.ip, 
-                req.body.id
+                req.body.snmp,
+                req.body.id,
             ],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
-                    mensagem: 'SERVIDOR ALTERADO COM SUCESSO',
-                    serveAtualizado:{
-                        ID: req.body.ID,
-                        name: req.body.name,
-                        ip: req.body.ip,
+                    mensagem: 'SERVIDOR ATUALIZADO COM SUCESSO',
+
+                    SERVIDOR_ATUALIZADO:{
+                        ID: req.body.id,
+                        NAME: req.body.name,
+                        IP: req.body.ip,
+                        SNMP: req.body.snmp,
                         request: {
                             tipo: "GET",
                             desc: "ATUALIZA SERVIDOR",
-                            url: 'http://localhost:3000/servers/' + req.body.ID
+                            // url: 'http://localhost:3000/servers/' + req.body.id
                         }
                     }
                 }
@@ -143,8 +150,8 @@ exports.deleteServer = (req, res, next) => {
                 const response = {
                     mensagem: 'SERVIDOR DELETADO COM SUCESSO',
                     request: {
-                        tipo: 'POST',
-                        desc: 'INSERE UM SERVER',
+                        tipo: 'DELETE',
+                        desc: 'POR FAVOR INSERE UM SERVIDOR',
                         url: 'http://localhost:3000/servers',
 
                     }

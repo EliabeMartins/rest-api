@@ -8,17 +8,17 @@ exports.getUsers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            'SELECT * FROM user;',
+            'SELECT * FROM users;',
             (error, result, fields) => {
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
                     Quantidade: result.length,
-                    users: result.map(user => {
+                    USUARIO: result.map(user => {
                         return {
-                            id: user.ID,
-                            name: user.NAME,
-                            password: user.PASSWORD,
-                            email: user.EMAIL,
+                            ID: user.ID,
+                            NAME: user.NAME,
+                            // PASSWORD: user.PASSWORD,
+                            EMAIL: user.EMAIL,
                             request: {
                                 tipo: "GET",
                                 desc: "RETORNA TODOS OS USUARIOS",
@@ -34,27 +34,28 @@ exports.getUsers = (req, res, next) => {
 };
 
 //
-exports.postUser = (req, res, next) => {
+exports.putUser = (req, res, next) => {
     mysql.getConnection((err, conn) => {
-        if (err) { return res.status(500).send({ error: error }) }
-        conn.query('SELECT * FROM user WHERE email = ?', [req.body.email], (error, result) => {
-            if (error) { return res.status(500).send({ error: error }) }
+        if (err) { return res.status(504).send({ error: error }) }
+        conn.query('SELECT * FROM users WHERE EMAIL = ?', [req.body.email], (error, result) => {
+            if (error) { return res.status(501).send({ error: error }) }
             if (result.length > 0) {
                 res.status(409).send({ mensagem: 'USUÁRIO JÁ CADASTRADO' })
             } else {
                 bcrypt.hash(req.body.password, 10, (errBcrypt, hash) => {
-                    if (errBcrypt) { return res.status(500).send({ error: errBcrypt }) }
+                    if (errBcrypt) { return res.status(502).send({ error: errBcrypt }) }
                     conn.query(
-                        `INSERT INTO user (name, email, password) VALUES (?,?,?)`,
+                        `INSERT INTO users (NAME, EMAIL, PASSWORD) VALUES (?,?,?)`,
                         [req.body.name, req.body.email, hash], 
                         (error, result) => {
                             conn.release();
-                            if (error) { return res.status(500).send({ error: error }) }
+                            if (error) { return res.status(503).send({ error: error }) }
                             response = {   
                                 mensagem: 'USUÁRIO CADASTRADO COM SUCESSO',
-                                User: {
-                                    id: result.insertId,
-                                    name: req.body.name
+                                USUARIO: {
+                                    ID: result.insertId,
+                                    NAME: req.body.name,
+                                    EMAIL: req.body.email
                                 }
                             }
                             return res.status(201).send(response);
@@ -70,7 +71,7 @@ exports.getIdUser = (req, res, next) => {
         mysql.getConnection((error, conn) => {
             if (error) { return res.status(500).send({ error: error}) }
             conn.query(
-                'SELECT * FROM user WHERE id = ?;',
+                'SELECT * FROM users WHERE ID = ?;',
             [req.params.id],
             (error, result, fields) => {
                 if (error) { return res.status(500).send({ error: error}) }
@@ -81,15 +82,15 @@ exports.getIdUser = (req, res, next) => {
                     })
                 }
                 const response = {
-                    User: {
-                            // id: result[0].ID,
-                            name: result[0].NAME,
-                            password: result[0].PASSWORD,
-                            email: result[0].EMAIL,
+                    USUARIO: {
+                            ID: result[0].ID,
+                            NAME: result[0].NAME,
+                            PASSWORD: result[0].PASSWORD,
+                            EMAIL: result[0].EMAIL,
                             request: {
                                 tipo: "GET",
-                                desc: "RETORNA DADOS DE UM USUÁRIOS",
-                                // url: 'http://localhost:3000/users/' + User.ID
+                                desc: "DADOS DO USUÁRIOS " + result[0].NAME,
+                                // url: 'http://localhost:3000/users/'
                         }
                     }
                 }
@@ -97,19 +98,18 @@ exports.getIdUser = (req, res, next) => {
                 }
             )
         });
-    };
-
+};
 
 //
 exports.patch_User = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            `UPDATE user
-                SET name       = ?, 
-                    password   = ?,
-                    email      = ?
-                WHERE id = ?`,
+            `UPDATE users
+                SET NAME       = ?, 
+                    PASSWORD   = ?,
+                    EMAIL      = ?
+                WHERE ID = ?`,
             [
                 req.body.name, 
                 req.body.password,
@@ -120,17 +120,17 @@ exports.patch_User = (req, res, next) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
-                    mensagem: 'SERVIDOR ALTERADO COM SUCESSO',
-                    userAtualizado:{
-                        ID: req.body.ID,
-                        name: req.body.name,
-                        password: req.body.password,
-                        email: eq.body.email,
-                        request: {
-                            tipo: "GET",
-                            desc: "ATUALIZA USUÁRIO",
-                            url: 'http://localhost:3000/users/' + req.body.ID
-                        }
+                    mensagem: 'USUÁRIO ALTERADO COM SUCESSO',
+                    USUARIO_ATUALIZADO:{
+                                ID: req.body.id,
+                                NAME: req.body.name,
+                                PASSWORD: req.body.password,
+                                EMAIL: req.body.email,
+                                request: {
+                                    tipo: "GET",
+                                    desc: "ATUALIZA USUÁRIO",
+                                    url: 'http://localhost:3000/users/' + req.body.name
+                                }
                     }
                 }
                 return res.status(202).send(response);
@@ -145,15 +145,15 @@ exports.delete_User = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            `DELETE FROM user WHERE id = ?`, [req.body.id],
+            `DELETE FROM users WHERE ID = ?`, [req.body.id],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
                     mensagem: 'USUÁRIO DELETADO COM SUCESSO',
                     request: {
-                        tipo: 'POST',
-                        desc: 'INSERE UM USUÁRIO',
+                        tipo: 'DELETE',
+                        desc: 'POR FAVOR INSERIR UM USUÁRIO',
                         url: 'http://localhost:3000/users',
 
                     }

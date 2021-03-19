@@ -12,7 +12,7 @@ const UsersController = require('../controllers/users-controller');
 router.get('/', UsersController.getUsers);
 
 // INSERE UM USUÁRIO
-router.post('/new_user', UsersController.postUser);
+router.put('/new_user', UsersController.putUser);
 
 // RETORNA DADOS DE UM USUÁRIO
 router.get('/:id', UsersController.getIdUser);

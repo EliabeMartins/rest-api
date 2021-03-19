@@ -4,7 +4,7 @@ Content-Type: application/json
 
 ###
 # Insere novo servidor
-POST http://localhost:3000/servers
+PUT http://localhost:3000/servers
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJsdWNhc0BzZXJ2aWNldHJpeC5jb20iLCJuYW1lIjoibHVjYXMiLCJpYXQiOjE2MTYwMjkwMjIsImV4cCI6MTYxNjAzOTgyMn0.pvQ1-Srznc-37it8JJlyDiaGITDShZCg08bpGRj0A5g
 {

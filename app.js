@@ -3,10 +3,14 @@ const app = express();
 const morgan = require('morgan');
 const bodyPaser = require('body-parser');
 
-const Users = require('./routes/users');
-const Servers = require('./routes/servers');
+
+// const Auth = require('./middleware/auth');
 const Login = require('./middleware/login');
-const Auth = require('./middleware/auth');
+const Users = require('./routes/users');
+const Cliente = require('./routes/clientes');
+const Servers = require('./routes/servers');
+
+
 
 app.use(morgan('dev'));
 app.use(bodyPaser.urlencoded({ extended: false })); // Apenas dados simples
@@ -25,17 +29,21 @@ app.use((req, res, next) => {
     next();
 });
 
+
+//
+
+// app.use('/auth', Auth);
 app.use('/login', Login);
-app.use('/auth', Auth);
 app.use('/users', Users);
+app.use('/cliente', Cliente);
 app.use('/servers', Servers);
 
 
 // QUANDO NÃO ENCONTRA A ROTA, ENTRA AQUI
 app.use((req, res, next) => {
-    const error = new Error('Não encontrado');
-    error.status(400);
-    next(error);
+    const erro = new Error('Não encontrado');
+    erro.status(400);
+    next(erro);
 });
 
 module.exports = app;

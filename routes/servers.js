@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
-const auth = require('../middleware/auth');
+// const auth = require('../middleware/auth');
 
 
 // REFERÊNCIA AS CONTROLLER
@@ -12,7 +12,7 @@ const ServersController = require('../controllers/servers-controller');
 router.get('/', ServersController.getServers);
 
 // INSERE UM SERVIDOR
-router.post('/', ServersController.postServers);
+router.put('/', ServersController.putServers);
 
 // RETORNA DADOS DE UM SERVIDOR
 router.get('/:id', ServersController.getIdServer);
