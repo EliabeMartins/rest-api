@@ -7,23 +7,17 @@ exports.getServers = (req, res, next) => {
         conn.query(
             'SELECT * FROM servers;',
             (error, result, fields) => {
+                conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
-                const response = {
-                    Quant: result.length,
-                    SERVIDOR: result.map(serv => {
+                const response = result.map(serv => {
                         return {
                             ID: serv.ID,
                             NAME: serv.NAME,
                             IP: serv.IP,
-                            SNMP: serv.SNMP_COMMUNITY,
-                            request: {
-                                tipo: "GET",
-                                desc: "RETORNA TODOS OS SERVIDORES",
-                                url: 'http://localhost:3000/servers/' + serv.ID
-                            }
+                            SNMP: serv.SNMP_COMMUNITY
                         }
-                    })
-                }
+                    });
+                
                 return res.status(200).send(response);
             }
         )
@@ -51,7 +45,7 @@ exports.putServers = (req, res, next) => {
                                 request: {
                                     tipo: "POST",
                                     desc: "INSERE NOVO SERVIDOR",
-                                    url: 'http://localhost:3000/servers/'
+                                    // url: proces.env.URL_API + 'servers/'
                                 }
                     }
                 }
@@ -127,7 +121,7 @@ exports.patchServer  = (req, res, next) => {
                         request: {
                             tipo: "GET",
                             desc: "ATUALIZA SERVIDOR",
-                            // url: 'http://localhost:3000/servers/' + req.body.id
+                            // url: proces.env.URL_API + 'servers/' + req.body.id
                         }
                     }
                 }
@@ -152,7 +146,7 @@ exports.deleteServer = (req, res, next) => {
                     request: {
                         tipo: 'DELETE',
                         desc: 'POR FAVOR INSERE UM SERVIDOR',
-                        url: 'http://localhost:3000/servers',
+                        url: proces.env.URL_API + 'servers',
 
                     }
                 }

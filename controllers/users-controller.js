@@ -11,22 +11,14 @@ exports.getUsers = (req, res, next) => {
             'SELECT * FROM users;',
             (error, result, fields) => {
                 if (error) { return res.status(500).send({ error: error}) }
-                const response = {
-                    Quantidade: result.length,
-                    USUARIO: result.map(user => {
+                const response = result.map(user => {
                         return {
                             ID: user.ID,
                             NAME: user.NAME,
                             // PASSWORD: user.PASSWORD,
-                            EMAIL: user.EMAIL,
-                            request: {
-                                tipo: "GET",
-                                desc: "RETORNA TODOS OS USUARIOS",
-                                url: 'http://localhost:3000/users/' + user.ID
-                            }
+                            EMAIL: user.EMAIL
                         }
-                    })
-                }
+                    });
                 return res.status(200).send(response);
             }
         )
@@ -90,7 +82,7 @@ exports.getIdUser = (req, res, next) => {
                             request: {
                                 tipo: "GET",
                                 desc: "DADOS DO USUÁRIOS " + result[0].NAME,
-                                // url: 'http://localhost:3000/users/'
+                                // url: proces.env.URL_API + 'users/'
                         }
                     }
                 }
@@ -129,7 +121,7 @@ exports.patch_User = (req, res, next) => {
                                 request: {
                                     tipo: "GET",
                                     desc: "ATUALIZA USUÁRIO",
-                                    url: 'http://localhost:3000/users/' + req.body.name
+                                    url: proces.env.URL_API + 'users/' + req.body.name
                                 }
                     }
                 }
@@ -154,7 +146,7 @@ exports.delete_User = (req, res, next) => {
                     request: {
                         tipo: 'DELETE',
                         desc: 'POR FAVOR INSERIR UM USUÁRIO',
-                        url: 'http://localhost:3000/users',
+                        url: proces.env.URL_API + 'users',
 
                     }
                 }

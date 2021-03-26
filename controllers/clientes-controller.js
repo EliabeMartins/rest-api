@@ -7,23 +7,17 @@ exports.getClientes = (req, res, next) => {
         conn.query(
             'SELECT * FROM clientes;',
             (error, result, fields) => {
+                conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
-                const response = {
-                    Quant: result.length,
-                    CLIENTE: result.map(client => {
+                const response = result.map(client => {
                         return {
                             ID: client.ID,
                             NAME: client.NAME,
                             EMAIL: client.EMAIL,
-                            TEL: client.TEL,
-                            request: {
-                                tipo: "GET",
-                                desc: "RETORNA TODOS OS CLIENTES",
-                                url: 'http://localhost:3000/cliente/' + client.ID
-                            }
+                            TEL: client.TEL
                         }
-                    })
-                }
+                    });
+                
                 return res.status(200).send(response);
             }
         )
@@ -55,7 +49,7 @@ exports.putCliente = (req, res, next) => {
                                 request: {
                                     tipo: "PUT",
                                     desc: "DADOS DO CLIENTE " + req.body.name,
-                                    // url: 'http://localhost:3000/cliente/ + result.insertId'
+                                    // url: proces.env.URL_API + 'cliente/' + result.insertId'
                             }
                             }
                         }
@@ -90,7 +84,7 @@ exports.getId_Cliente = (req, res, next) => {
                         request: {
                             tipo: "GET/ID:?",
                             desc: "DADOS DO CLIENTE " + result[0].NAME,
-                            // url: 'http://localhost:3000/cliente/'
+                            // url: proces.env.URL_API + 'cliente/'
                     }
                 }
             }
@@ -129,7 +123,7 @@ exports.patchCliente = (req, res, next) => {
                                 request: {
                                     tipo: "PATCH",
                                     desc: "ATUALIZA USUÁRIO",
-                                    url: 'http://localhost:3000/cliente/' + req.body.name
+                                    url: proces.env.URL_API + 'cliente/' + req.body.name
                                 }
                     }
                 }
@@ -153,7 +147,7 @@ exports.deleteCliente = (req, res, next) => {
                     request: {
                         tipo: 'DELETE',
                         desc: 'POR FAVOR INSERIR UM CLIENTE',
-                        url: 'http://localhost:3000/cliente/',
+                        url: proces.env.URL_API + 'cliente/',
 
                     }
                 }
