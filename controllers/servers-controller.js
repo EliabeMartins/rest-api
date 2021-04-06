@@ -17,21 +17,18 @@ exports.getServers = (req, res, next) => {
                             SNMP: serv.SNMP_COMMUNITY
                         }
                     });
-                
                 return res.status(200).send(response);
             }
         )
     });
 };
-
-
 //
-exports.putServers = (req, res, next) => {
+exports.postServers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
             'INSERT INTO servers (name, ip, snmp_community) VALUES (?,?,?)',
-            [req.body.name, req.body.ip, req.body.snmp],
+            [req.body.NAME, req.body.IP, req.body.SNMP],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
@@ -39,14 +36,9 @@ exports.putServers = (req, res, next) => {
                     mensagem: 'SERVIDOR CRIADO COM SUCESSO',
                     NOVO_SERVIDOR:{
                                 ID: result.insertId,
-                                NAME: req.body.name,
-                                IP: req.body.ip,
-                                SNMP: req.body.snmp,
-                                request: {
-                                    tipo: "POST",
-                                    desc: "INSERE NOVO SERVIDOR",
-                                    // url: proces.env.URL_API + 'servers/'
-                                }
+                                NAME: req.body.NAME,
+                                IP: req.body.IP,
+                                SNMP: req.body.SNMP                
                     }
                 }
                 return res.status(201).send(response);
@@ -54,8 +46,6 @@ exports.putServers = (req, res, next) => {
         )
     });
 };
-
-
 //
 exports.getIdServer = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -72,25 +62,16 @@ exports.getIdServer = (req, res, next) => {
                     })
                 }
                 const response = {
-                    SERVIDOR: {
-                        ID: result[0].ID,
+                    ID: result[0].ID,
                         NAME: result[0].NAME,
                         IP: result[0].IP,
-                        SNMP: result[0].SNMP_COMMUNITY,
-
-                        request: {
-                            tipo: "GET",
-                            desc: "DADOS DO SERVIDOR " + result[0].NAME
-                        }
-                    }
+                        SNMP: result[0].SNMP_COMMUNITY
                 }
                 return res.status(200).send(response);
             }
         )
     });
 };
-
-
 //
 exports.patchServer  = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -102,53 +83,37 @@ exports.patchServer  = (req, res, next) => {
             SNMP_COMMUNITY = ?
                 WHERE  id = ?`,
             [                
-                req.body.name, 
-                req.body.ip, 
-                req.body.snmp,
-                req.body.id,
+                req.body.NAME, 
+                req.body.IP, 
+                req.body.SNMP,
+                req.body.ID,
             ],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
                     mensagem: 'SERVIDOR ATUALIZADO COM SUCESSO',
-
-                    SERVIDOR_ATUALIZADO:{
-                        ID: req.body.id,
-                        NAME: req.body.name,
-                        IP: req.body.ip,
-                        SNMP: req.body.snmp,
-                        request: {
-                            tipo: "GET",
-                            desc: "ATUALIZA SERVIDOR",
-                            // url: proces.env.URL_API + 'servers/' + req.body.id
-                        }
-                    }
+                    ID: req.body.ID,
+                        NAME: req.body.NAME,
+                        IP: req.body.IP,
+                        SNMP: req.body.SNMP
                 }
                 return res.status(202).send(response);
             }
         )
     });
 };
-
-
 //
 exports.deleteServer = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            `DELETE FROM servers WHERE id = ?`, [req.body.id],
+            `DELETE FROM servers WHERE id = ?`, [req.params.id],
             (error, resutl, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
-                    mensagem: 'SERVIDOR DELETADO COM SUCESSO',
-                    request: {
-                        tipo: 'DELETE',
-                        desc: 'POR FAVOR INSERE UM SERVIDOR',
-                        url: proces.env.URL_API + 'servers',
-
-                    }
+                    mensagem: 'SERVIDOR DELETADO COM SUCESSO'
                 }
                 return res.status(202).send(response);
             }

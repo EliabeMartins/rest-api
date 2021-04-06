@@ -12,15 +12,15 @@ const ServersController = require('../controllers/servers-controller');
 router.get('/', ServersController.getServers);
 
 // INSERE UM SERVIDOR
-router.put('/', ServersController.putServers);
+router.post('/', ServersController.postServers);
 
 // RETORNA DADOS DE UM SERVIDOR
 router.get('/:id', ServersController.getIdServer);
 
 // ALTERA UM SERVIDOR
-router.patch('/', ServersController.patchServer);
+router.patch('/:id', ServersController.patchServer);
 
 //DELETA UM SERVIDOR
-router.delete('/', ServersController.deleteServer);
+router.delete('/:id', ServersController.deleteServer);
 
 module.exports = router;

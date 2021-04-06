@@ -12,15 +12,15 @@ const UsersController = require('../controllers/users-controller');
 router.get('/', UsersController.getUsers);
 
 // INSERE UM USUÁRIO
-router.put('/new_user', UsersController.putUser);
+router.post('/', UsersController.postUser);
 
 // RETORNA DADOS DE UM USUÁRIO
 router.get('/:id', UsersController.getIdUser);
 
 //ALTERA UM USUÁRIO
-router.patch('/', UsersController.patch_User);
+router.patch('/:id', UsersController.patch_User);
 
 //DELETA UM USUÁRIO
-router.delete('/', UsersController.delete_User);
+router.delete('/:id', UsersController.delete_User);
 
 module.exports = router;

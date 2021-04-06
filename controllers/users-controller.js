@@ -24,9 +24,8 @@ exports.getUsers = (req, res, next) => {
         )
     });
 };
-
 //
-exports.putUser = (req, res, next) => {
+exports.postUser = (req, res, next) => {
     mysql.getConnection((err, conn) => {
         if (err) { return res.status(504).send({ error: error }) }
         conn.query('SELECT * FROM users WHERE EMAIL = ?', [req.body.email], (error, result) => {
@@ -38,7 +37,7 @@ exports.putUser = (req, res, next) => {
                     if (errBcrypt) { return res.status(502).send({ error: errBcrypt }) }
                     conn.query(
                         `INSERT INTO users (NAME, EMAIL, PASSWORD) VALUES (?,?,?)`,
-                        [req.body.name, req.body.email, hash], 
+                        [req.body.NAME, req.body.EMAIL, hash], 
                         (error, result) => {
                             conn.release();
                             if (error) { return res.status(503).send({ error: error }) }
@@ -46,8 +45,8 @@ exports.putUser = (req, res, next) => {
                                 mensagem: 'USUÁRIO CADASTRADO COM SUCESSO',
                                 USUARIO: {
                                     ID: result.insertId,
-                                    NAME: req.body.name,
-                                    EMAIL: req.body.email
+                                    NAME: req.body.NAME,
+                                    EMAIL: req.body.EMAIL
                                 }
                             }
                             return res.status(201).send(response);
@@ -57,7 +56,6 @@ exports.putUser = (req, res, next) => {
         })
     });
 };
-
 //
 exports.getIdUser = (req, res, next) => {
         mysql.getConnection((error, conn) => {
@@ -78,12 +76,7 @@ exports.getIdUser = (req, res, next) => {
                             ID: result[0].ID,
                             NAME: result[0].NAME,
                             PASSWORD: result[0].PASSWORD,
-                            EMAIL: result[0].EMAIL,
-                            request: {
-                                tipo: "GET",
-                                desc: "DADOS DO USUÁRIOS " + result[0].NAME,
-                                // url: proces.env.URL_API + 'users/'
-                        }
+                            EMAIL: result[0].EMAIL                            
                     }
                 }
                 return res.status(200).send(response);
@@ -91,7 +84,6 @@ exports.getIdUser = (req, res, next) => {
             )
         });
 };
-
 //
 exports.patch_User = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -117,12 +109,7 @@ exports.patch_User = (req, res, next) => {
                                 ID: req.body.id,
                                 NAME: req.body.name,
                                 PASSWORD: req.body.password,
-                                EMAIL: req.body.email,
-                                request: {
-                                    tipo: "GET",
-                                    desc: "ATUALIZA USUÁRIO",
-                                    url: proces.env.URL_API + 'users/' + req.body.name
-                                }
+                                EMAIL: req.body.email
                     }
                 }
                 return res.status(202).send(response);
@@ -130,25 +117,17 @@ exports.patch_User = (req, res, next) => {
         )
     });
 };
-
-
 //
 exports.delete_User = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            `DELETE FROM users WHERE ID = ?`, [req.body.id],
+            `DELETE FROM users WHERE ID = ?`, [req.params.id],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = {
-                    mensagem: 'USUÁRIO DELETADO COM SUCESSO',
-                    request: {
-                        tipo: 'DELETE',
-                        desc: 'POR FAVOR INSERIR UM USUÁRIO',
-                        url: proces.env.URL_API + 'users',
-
-                    }
+                    mensagem: 'USUÁRIO DELETADO COM SUCESSO'
                 }
                 return res.status(202).send(response);
             }

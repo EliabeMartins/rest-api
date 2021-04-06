@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 router.post('/', (req, res, next) => {
    mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
-        const query = `SELECT * FROM user WHERE name = ?`;
+        const query = `SELECT * FROM users WHERE name = ?`;
             conn.query(query,[req.body.name],(error, result, fields) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error }) }

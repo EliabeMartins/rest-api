@@ -8,18 +8,18 @@ const ClientesController = require('../controllers/clientes-controller');
 
 
 // RETORNA TODOS OS CLIENTES
-router.get('/', ClientesController.getClientes);
+router.get('/', ClientesController.getAllClientes);
 
 // INSERE UM CLIENTE
-router.put('/', ClientesController.putCliente);
+router.post('/', ClientesController.postCliente);
 
 // RETORNA DADOS DE UM CLIENTE
-router.get('/:id', ClientesController.getId_Cliente);
+router.get('/:id', ClientesController.getIdCliente);
 
 // ALTERA DADOS DE UM CLIENTE
-router.patch('/', ClientesController.patchCliente);
+router.patch('/:id', ClientesController.patchCliente);
 
 //DELETA UM CLIENTE
-router.delete('/', ClientesController.deleteCliente);
+router.delete('/:id', ClientesController.deleteCliente);
 
 module.exports = router;
