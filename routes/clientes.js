@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const auth = require('../middleware/auth');
 
 
 // REFERÊNCIA O CONTROLLER
@@ -8,18 +9,18 @@ const ClientesController = require('../controllers/clientes-controller');
 
 
 // RETORNA TODOS OS CLIENTES
-router.get('/', ClientesController.getAllClientes);
+router.get('/', auth, ClientesController.getAllClientes);
 
 // INSERE UM CLIENTE
-router.post('/', ClientesController.postCliente);
+router.post('/', auth, ClientesController.postCliente);
 
 // RETORNA DADOS DE UM CLIENTE
-router.get('/:id', ClientesController.getIdCliente);
+router.get('/:id', auth, ClientesController.getIdCliente);
 
 // ALTERA DADOS DE UM CLIENTE
-router.patch('/:id', ClientesController.patchCliente);
+router.patch('/:id', auth, ClientesController.patchCliente);
 
 //DELETA UM CLIENTE
-router.delete('/:id', ClientesController.deleteCliente);
+router.delete('/:id', auth, ClientesController.deleteCliente);
 
 module.exports = router;

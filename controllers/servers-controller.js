@@ -55,7 +55,6 @@ exports.getIdServer = (req, res, next) => {
             [req.params.id],
             (error, result, fields) => {
                 if (error) { return res.status(500).send({ error: error}) }
-
                 if (result.length == 0) {
                     return res.status(404).send({
                         mensagem: 'Não foi encontrado Servidor com esse ID'

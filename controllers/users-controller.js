@@ -28,12 +28,12 @@ exports.getUsers = (req, res, next) => {
 exports.postUser = (req, res, next) => {
     mysql.getConnection((err, conn) => {
         if (err) { return res.status(504).send({ error: error }) }
-        conn.query('SELECT * FROM users WHERE EMAIL = ?', [req.body.email], (error, result) => {
+        conn.query('SELECT * FROM users WHERE EMAIL = ?', [req.body.EMAIL], (error, result) => {
             if (error) { return res.status(501).send({ error: error }) }
             if (result.length > 0) {
                 res.status(409).send({ mensagem: 'USUÁRIO JÁ CADASTRADO' })
             } else {
-                bcrypt.hash(req.body.password, 10, (errBcrypt, hash) => {
+                bcrypt.hash(req.body.PASSWORD, 10, (errBcrypt, hash) => {
                     if (errBcrypt) { return res.status(502).send({ error: errBcrypt }) }
                     conn.query(
                         `INSERT INTO users (NAME, EMAIL, PASSWORD) VALUES (?,?,?)`,
@@ -42,12 +42,7 @@ exports.postUser = (req, res, next) => {
                             conn.release();
                             if (error) { return res.status(503).send({ error: error }) }
                             response = {   
-                                mensagem: 'USUÁRIO CADASTRADO COM SUCESSO',
-                                USUARIO: {
-                                    ID: result.insertId,
-                                    NAME: req.body.NAME,
-                                    EMAIL: req.body.EMAIL
-                                }
+                                mensagem: 'USUÁRIO CADASTRADO COM SUCESSO'
                             }
                             return res.status(201).send(response);
                         });
@@ -65,19 +60,16 @@ exports.getIdUser = (req, res, next) => {
             [req.params.id],
             (error, result, fields) => {
                 if (error) { return res.status(500).send({ error: error}) }
-                
                 if (result.length == 0) {
                     return res.status(404).send({
                         mensagem: 'NÃO FOI ENCONTRADO USUÁRIO COM ESSE ID'
                     })
                 }
                 const response = {
-                    USUARIO: {
-                            ID: result[0].ID,
-                            NAME: result[0].NAME,
-                            PASSWORD: result[0].PASSWORD,
-                            EMAIL: result[0].EMAIL                            
-                    }
+                    ID: result[0].ID,
+                    NAME: result[0].NAME,
+                    // PASSWORD: result[0].PASSWORD,
+                    EMAIL: result[0].EMAIL
                 }
                 return res.status(200).send(response);
                 }
@@ -118,11 +110,11 @@ exports.patch_User = (req, res, next) => {
     });
 };
 //
-exports.delete_User = (req, res, next) => {
+exports.deleteUser = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            `DELETE FROM users WHERE ID = ?`, [req.params.id],
+            `DELETE FROM users WHERE id = ?`, [req.params.id],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }

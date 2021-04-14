@@ -5,12 +5,11 @@ const bodyPaser = require('body-parser');
 
 
 const app = express();
-// const Auth = require('./middleware/auth');
 const Login = require('./middleware/login');
 const Users = require('./routes/users');
 const Cliente = require('./routes/clientes');
 const Servers = require('./routes/servers');
-
+const Dominios = require('./routes/dominios');
 
 
 app.use(morgan('dev'));
@@ -37,7 +36,7 @@ app.use('/login', Login);
 app.use('/users', Users);
 app.use('/clientes', Cliente);
 app.use('/servers', Servers);
-
+app.use('/dominios', Dominios);
 
 // QUANDO NÃO ENCONTRA A ROTA, ENTRA AQUI
 app.use((req, res, next) => {

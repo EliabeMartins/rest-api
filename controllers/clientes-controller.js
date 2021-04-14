@@ -23,7 +23,6 @@ exports.getAllClientes = (req, res, next) => {
         )
     });
 };
-
 //
 exports.postCliente = (req, res, next) => {
     mysql.getConnection((err, conn) => {
@@ -39,7 +38,7 @@ exports.postCliente = (req, res, next) => {
                     (error, result) => {
                         conn.release();
                         if (error) { return res.status(503).send({ error: error }) }
-                        response = {   
+                        const response = {   
                             mensagem: 'CLIENTE CADASTRADO COM SUCESSO',
                                 ID: result.insertId,
                                 NAME: req.body.NAME,
@@ -52,7 +51,6 @@ exports.postCliente = (req, res, next) => {
         })
     });
 };
-
 //
 exports.getIdCliente = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -78,7 +76,6 @@ exports.getIdCliente = (req, res, next) => {
         )
     });
 };
-
 //
 exports.patchCliente = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -112,7 +109,6 @@ exports.patchCliente = (req, res, next) => {
         )
     });
 };
-
 //
 exports.deleteCliente = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -122,9 +118,9 @@ exports.deleteCliente = (req, res, next) => {
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(501).send({ error: error}) }
-                response = {
-                    ID: req.body.ID,
-                    mensagem: 'CLIENTE DELETADO COM SUCESSO '+ req.body.ID
+                const response = {
+                    // ID: req.body.ID,
+                    mensagem: 'CLIENTE DELETADO COM SUCESSO '
                 }
                 return res.status(202).send(response);
             }
