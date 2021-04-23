@@ -9,10 +9,10 @@ const ServersController = require('../controllers/servers-controller');
 
 
 // RETORNA TODOS OS SERVIDORES
-router.get('/', auth, ServersController.getServers);
+router.get('/', ServersController.getServers);
 
 // INSERE UM SERVIDOR
-router.post('/', auth, ServersController.postServers);
+router.post('/', ServersController.postServers);
 
 // RETORNA DADOS DE UM SERVIDOR
 router.get('/:id', ServersController.getIdServer);

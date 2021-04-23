@@ -5,15 +5,17 @@ exports.getServers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            'SELECT * FROM servers;',
+            'SELECT srv.ID server_ID, srv.CLIENTE cliente_ID, srv.NAME server_NAME, srv.IP, srv.TIPO, srv.SNMP_COMMUNITY, cli.NAME cliente_NAME from servers srv left join clientes cli on srv.cliente = cli.id',
             (error, result, fields) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
                 const response = result.map(serv => {
                         return {
-                            ID: serv.ID,
-                            NAME: serv.NAME,
+                            ID: serv.server_ID,
+                            CLIENTE: serv.cliente_NAME,
+                            NAME: serv.server_NAME,
                             IP: serv.IP,
+                            TIPO: serv.TIPO,
                             SNMP: serv.SNMP_COMMUNITY
                         }
                     });
@@ -27,8 +29,8 @@ exports.postServers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            'INSERT INTO servers (name, ip, snmp_community) VALUES (?,?,?)',
-            [req.body.NAME, req.body.IP, req.body.SNMP],
+            'INSERT INTO servers (name, ip, cliente, tipo, snmp_community) VALUES (?,?,?,?,?)',
+            [req.body.NAME, req.body.IP, req.body.CLIENTE, req.body.TIPO, req.body.SNMP],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
@@ -38,6 +40,8 @@ exports.postServers = (req, res, next) => {
                                 ID: result.insertId,
                                 NAME: req.body.NAME,
                                 IP: req.body.IP,
+                                CLIENTE: req.body.CLIENTE,
+                                TIPO: req.body.TIPO,
                                 SNMP: req.body.SNMP                
                     }
                 }
@@ -64,6 +68,8 @@ exports.getIdServer = (req, res, next) => {
                     ID: result[0].ID,
                         NAME: result[0].NAME,
                         IP: result[0].IP,
+                        CLIENTE: result[0].CLINTE,
+                        TIPO: result[0].TIPO,                        
                         SNMP: result[0].SNMP_COMMUNITY
                 }
                 return res.status(200).send(response);
@@ -79,11 +85,15 @@ exports.patchServer  = (req, res, next) => {
             `UPDATE servers
                 SET   NAME = ?,
                       IP   = ?,
+                      CLIENTE   = ?,
+                      TIPO   = ?,
             SNMP_COMMUNITY = ?
                 WHERE  id = ?`,
             [                
                 req.body.NAME, 
                 req.body.IP, 
+                req.body.CLIENTE, 
+                req.body.TIPO, 
                 req.body.SNMP,
                 req.body.ID,
             ],
@@ -95,6 +105,8 @@ exports.patchServer  = (req, res, next) => {
                     ID: req.body.ID,
                         NAME: req.body.NAME,
                         IP: req.body.IP,
+                        CLIENTE: req.body.CLIENTE,
+                        TIPO: req.body.TIPO,
                         SNMP: req.body.SNMP
                 }
                 return res.status(202).send(response);
