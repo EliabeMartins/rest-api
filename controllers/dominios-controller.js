@@ -16,9 +16,11 @@ exports.getAllDominios = (req, res, next) => {
                     return {
                         ID: domin.ID,
                         DOMINIO: domin.DOMINIO,
+                        IPEXTERNO:domin.IPEXTERNO,
                         NAMEUSER: domin.NAMEUSER,
                         IPBD: domin.IPBD,
-                        NAMEBD: domin.NAMEBD
+                        NAMEBD: domin.NAMEBD,
+                        USERBD: domin.USERBD
                     }
                 });
 
@@ -40,8 +42,8 @@ exports.postDominio = (req, res, next) => {
                     else {
                         hash2 = bcrypt.hashSync(req.body.PASSWORDBD, 10);
                         conn.query(
-                            `INSERT INTO dominios (IDSERVER, DOMINIO, NAMEUSER, PASSWORDUSER, IPBD, NAMEBD, PASSWORDBD) VALUES (?,?,?,?,?,?,?)`,
-                            [req.body.IDSERVER, req.body.DOMINIO, req.body.NAMEUSER, hash, req.body.IPBD, req.body.NAMEBD, hash2],
+                            `INSERT INTO dominios (IDSERVER, DOMINIO, IPEXTERNO, NAMEUSER, PASSWORDUSER, IPBD, NAMEBD, USERBD, PASSWORDBD) VALUES (?,?,?,?,?,?,?,?,?)`,
+                            [req.body.IDSERVER, req.body.DOMINIO, req.body.IPEXTERNO, req.body.NAMEUSER, hash, req.body.IPBD, req.body.NAMEBD, req.body.USERBD, hash2],
                             (error, result) => {
                                 conn.release();
                                 if (error) { return res.status(503).send({ error: error }) }
@@ -74,9 +76,11 @@ exports.getIdDominio = (req, res, next) => {
                 let response = {
                     ID: result[0].ID,
                     DOMINIO: result[0].DOMINIO,
+                    IPEXTERNO: result[0].IPEXTERNO,
                     NAMEUSER: result[0].NAMEUSER,
                     IPBD: result[0].IPBD,
-                    NAMEBD: result[0].NAMEBD
+                    NAMEBD: result[0].NAMEBD,
+                    USERBD: result[0].USERBD
                 }
                 return res.status(200).send(response);
             }

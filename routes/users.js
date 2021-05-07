@@ -21,6 +21,6 @@ router.get('/:id', auth, UsersController.getIdUser);
 router.patch('/:id', auth, UsersController.patch_User);
 
 //DELETA UM USUÁRIO
-router.delete('/:id', UsersController.deleteUser);
+router.delete('/:id', auth, UsersController.deleteUser);
 
 module.exports = router;

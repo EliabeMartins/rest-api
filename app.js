@@ -10,6 +10,7 @@ const Users = require('./routes/users');
 const Cliente = require('./routes/clientes');
 const Servers = require('./routes/servers');
 const Dominios = require('./routes/dominios');
+const Tipos = require('./routes/tipos');
 
 
 app.use(morgan('dev'));
@@ -37,6 +38,7 @@ app.use('/users', Users);
 app.use('/clientes', Cliente);
 app.use('/servers', Servers);
 app.use('/dominios', Dominios);
+app.use('/tipos', Tipos);
 
 // QUANDO NÃO ENCONTRA A ROTA, ENTRA AQUI
 app.use((req, res, next) => {

@@ -5,7 +5,7 @@ exports.getServers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            'SELECT srv.ID server_ID, srv.CLIENTE cliente_ID, srv.NAME server_NAME, srv.IP, srv.TIPO, srv.SNMP_COMMUNITY, cli.NAME cliente_NAME from servers srv left join clientes cli on srv.cliente = cli.id',
+            'SELECT srv.ID server_ID, srv.CLIENTE cliente_ID, srv.NAME server_NAME, srv.IP, srv.TIPO tipo_ID, srv.SNMP_COMMUNITY, cli.NAME cliente_NAME, tip.NAME tipo_NAME   from servers srv  left join clientes cli on srv.cliente = cli.id left join Tipos tip on  srv.tipo = tip.id',
             (error, result, fields) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
@@ -15,7 +15,7 @@ exports.getServers = (req, res, next) => {
                             CLIENTE: serv.cliente_NAME,
                             NAME: serv.server_NAME,
                             IP: serv.IP,
-                            TIPO: serv.TIPO,
+                            TIPO: serv.tipo_NAME,
                             SNMP: serv.SNMP_COMMUNITY
                         }
                     });
@@ -68,7 +68,7 @@ exports.getIdServer = (req, res, next) => {
                     ID: result[0].ID,
                         NAME: result[0].NAME,
                         IP: result[0].IP,
-                        CLIENTE: result[0].CLINTE,
+                        CLIENTE: result[0].CLIENTE,
                         TIPO: result[0].TIPO,                        
                         SNMP: result[0].SNMP_COMMUNITY
                 }
