@@ -16,7 +16,8 @@ exports.getServers = (req, res, next) => {
                             NAME: serv.server_NAME,
                             IP: serv.IP,
                             TIPO: serv.tipo_NAME,
-                            SNMP: serv.SNMP_COMMUNITY
+                            SNMP: serv.SNMP_COMMUNITY,
+                            INFO: serv.INFO
                         }
                     });
                 return res.status(200).send(response);
@@ -29,8 +30,8 @@ exports.postServers = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error}) }
         conn.query(
-            'INSERT INTO servers (name, ip, cliente, tipo, snmp_community) VALUES (?,?,?,?,?)',
-            [req.body.NAME, req.body.IP, req.body.CLIENTE, req.body.TIPO, req.body.SNMP],
+            'INSERT INTO servers (name, ip, cliente, tipo, snmp_community, info) VALUES (?,?,?,?,?,?)',
+            [req.body.NAME, req.body.IP, req.body.CLIENTE, req.body.TIPO, req.body.SNMP, req.body.INFO],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error}) }
@@ -42,7 +43,8 @@ exports.postServers = (req, res, next) => {
                                 IP: req.body.IP,
                                 CLIENTE: req.body.CLIENTE,
                                 TIPO: req.body.TIPO,
-                                SNMP: req.body.SNMP                
+                                SNMP: req.body.SNMP,
+                                INFO: req.body.INFO            
                     }
                 }
                 return res.status(201).send(response);
@@ -70,7 +72,8 @@ exports.getIdServer = (req, res, next) => {
                         IP: result[0].IP,
                         CLIENTE: result[0].CLIENTE,
                         TIPO: result[0].TIPO,                        
-                        SNMP: result[0].SNMP_COMMUNITY
+                        SNMP: result[0].SNMP_COMMUNITY,
+                        INFO: result[0].INFO
                 }
                 return res.status(200).send(response);
             }
@@ -87,7 +90,8 @@ exports.patchServer  = (req, res, next) => {
                       IP   = ?,
                       CLIENTE   = ?,
                       TIPO   = ?,
-            SNMP_COMMUNITY = ?
+                      SNMP_COMMUNITY = ?,
+                      INFO = ?,
                 WHERE  id = ?`,
             [                
                 req.body.NAME, 
@@ -95,6 +99,7 @@ exports.patchServer  = (req, res, next) => {
                 req.body.CLIENTE, 
                 req.body.TIPO, 
                 req.body.SNMP,
+                req.body.INFO,
                 req.body.ID,
             ],
             (error, result, field) => {
@@ -107,7 +112,8 @@ exports.patchServer  = (req, res, next) => {
                         IP: req.body.IP,
                         CLIENTE: req.body.CLIENTE,
                         TIPO: req.body.TIPO,
-                        SNMP: req.body.SNMP
+                        SNMP: req.body.SNMP,
+                        INFO: req.body.INFO
                 }
                 return res.status(202).send(response);
             }
